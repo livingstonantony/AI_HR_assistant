@@ -43,6 +43,5 @@ Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
 Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
 
 
-http://192.168.0.3:11434
 
 http://localhost:11434
