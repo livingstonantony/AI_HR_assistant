@@ -9,11 +9,8 @@ import io.ktor.http.*
 import io.ktor.server.request.receive
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.coroutines.delay
 
-fun Route.employeeRoutes() {
-
-    val repository = EmployeeRepository()
+fun Route.employeeRoutes(repository: EmployeeRepository) {
 
     route("/") {
 
@@ -37,7 +34,7 @@ fun Route.employeeRoutes() {
                 return@get
             }
 
-            val employee: EmployeeDetails? = repository.getEmployee(id).let {
+            val employee: EmployeeDetails? = repository.getEmployeeById(id).let {
                 if (it == null) {
                     null
                 } else {

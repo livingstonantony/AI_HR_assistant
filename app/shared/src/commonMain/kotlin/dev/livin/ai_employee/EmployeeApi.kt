@@ -16,7 +16,7 @@ import kotlinx.serialization.json.Json
 
 class EmployeeApi {
 
-    val BASE_URL = "http://192.168.0.3:8080"
+    val BASE_URL = "http://localhost:8080"
     private val client = HttpClient {
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true })

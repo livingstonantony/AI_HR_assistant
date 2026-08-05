@@ -13,6 +13,7 @@ class EmployeeAgentProvider {
         tool(GetEmployeesTool(api))
         tool(GetEmployeeByIdTool(api))
         tool(AddEmployeeTool(api))
+
     }
 
     fun provideAgent(): AIAgent<String, String> {
