@@ -26,14 +26,14 @@ fun buildEmployeeMCPServer(repo: EmployeeRepository): Server {
         )
     )
 
-    server.addTool(
+/*    server.addTool(
         name = "Get Employees",
         description = "Retrieve Employees from the company",
         inputSchema = ToolSchema()
     ) {
         val employees = repo.getEmployees()
         CallToolResult(content = listOf(TextContent(text = employees.toString())))
-    }
+    }*/
 
     server.addTool(
         name = " Get Employee by id",

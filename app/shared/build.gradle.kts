@@ -79,6 +79,7 @@ kotlin {
 
             // Beta
             implementation(libs.koog.agents.additions)
+            implementation(libs.koog.agents.mcp)
 
         }
         commonTest.dependencies {

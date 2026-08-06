@@ -13,6 +13,7 @@ composeMultiplatform = "1.11.1"
 junit = "4.13.2"
 koogAgents = "1.1.1"
 koogAgentsAdditions = "1.0.0-beta"
+koogAgentsMcp = "1.1.1-beta"
 kotlin = "2.4.10"
 kotlinx-coroutines = "1.11.0"
 ktor = "3.5.1"
@@ -27,6 +28,7 @@ mcpVersion = "0.15.0"
 [libraries]
 koog-agents = { module = "ai.koog:koog-agents", version.ref = "koogAgents" }
 koog-agents-additions = { module = "ai.koog:koog-agents-additions", version.ref = "koogAgentsAdditions" }
+koog-agents-mcp = { module = "ai.koog:agents-mcp", version.ref = "koogAgentsMcp" }
 
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }

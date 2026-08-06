@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -27,6 +26,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,14 +36,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.livin.ai_employee.agent.EmployeeAgentProvider
+import ai.koog.agents.core.agent.AIAgent
+import androidx.lifecycle.compose.LifecycleResumeEffect
+import dev.livin.ai_employee.EmployeeApi
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(onBackClick: () -> Unit) {
     val scope = rememberCoroutineScope()
-    // Provide your agent here
-    val agent = remember { EmployeeAgentProvider().provideAgent() }
+    val scopeMCP = rememberCoroutineScope()
 
+    // Store the agent in a state
+    var agent by remember { mutableStateOf<AIAgent<String, String>?>(null) }
+    var isLoading by remember { mutableStateOf(true) } // Start as true while initializing
     var inputText by remember { mutableStateOf("") }
     var messages by remember {
         mutableStateOf(
@@ -55,7 +60,22 @@ fun ChatScreen(onBackClick: () -> Unit) {
             )
         )
     }
-    var isLoading by remember { mutableStateOf(false) }
+
+
+    LaunchedEffect(Unit) {
+        if (agent != null) return@LaunchedEffect
+        try {
+            val newAgent = EmployeeAgentProvider().provideAgent()
+            agent = newAgent
+            println("Agent successfully initialized")
+        } catch (e: Exception) {
+            // Check if it's a real error and not just a normal coroutine cancellation
+            println("Initialization error: ${e.message}")
+            messages = messages + ChatMessage("Error initializing: ${e.message}", false)
+        } finally {
+            isLoading = false
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -92,17 +112,18 @@ fun ChatScreen(onBackClick: () -> Unit) {
                     value = inputText,
                     onValueChange = { inputText = it },
                     modifier = Modifier.weight(1f),
-                    enabled = !isLoading
+                    enabled = !isLoading && agent != null
                 )
                 IconButton(
                     onClick = {
+                        val currentAgent = agent ?: return@IconButton
                         val text = inputText
                         messages = messages + ChatMessage(text, true)
                         inputText = ""
                         isLoading = true
                         scope.launch {
                             try {
-                                val response = agent.run(text)
+                                val response = currentAgent.run(text)
                                 messages = messages + ChatMessage(response, false)
                             } catch (e: Exception) {
                                 messages = messages + ChatMessage("Error: ${e.message}", false)
@@ -111,7 +132,7 @@ fun ChatScreen(onBackClick: () -> Unit) {
                             }
                         }
                     },
-                    enabled = inputText.isNotBlank() && !isLoading
+                    enabled = inputText.isNotBlank() && !isLoading && agent != null
                 ) {
                     Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send")
                 }

@@ -24,6 +24,7 @@ class GetEmployeesTool(private val api: EmployeeApi) : Tool<Unit, List<EmployeeI
 // 1. Define a wrapper for the arguments
 @Serializable
 data class GetEmployeeArgs(val id: Int)
+/*
 
 class GetEmployeeByIdTool(private val api: EmployeeApi) : Tool<GetEmployeeArgs, EmployeeDetails>(
     argsType = typeToken<GetEmployeeArgs>(),
@@ -58,3 +59,4 @@ class AddEmployeeTool(private val api: EmployeeApi) : Tool<AddEmployeeArgs, Resp
         )
     )
 }
+*/
