@@ -169,12 +169,12 @@ A **Ktor** server exposing a simple REST API for employee data:
 
 ### Run commands
 
-| Target | Command |
-|---|---|
-| Backend server | `./gradlew :server.run` |
-| Android app | `./gradlew :app:androidApp:assembleDebug` |
-| Desktop app | `./gradlew :app:desktopApp:run` |
-| Desktop (hot reload) | `./gradlew :app:desktopApp:hotRun --auto` |
+| Target | Command                                              |
+|---|------------------------------------------------------|
+| Backend server | `./gradlew :server:run`                              |
+| Android app | `./gradlew :app:androidApp:assembleDebug`            |
+| Desktop app | `./gradlew :app:desktopApp:run`                      |
+| Desktop (hot reload) | `./gradlew :app:desktopApp:hotRun --auto`            |
 | iOS app | Open [`/app/iosApp`](./app/iosApp/) in Xcode and run |
 
 ### Run tests
