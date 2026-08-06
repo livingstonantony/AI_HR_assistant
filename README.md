@@ -6,6 +6,7 @@ A teaching project demonstrating how to build an **AI-powered HR assistant** usi
 
 ---
 
+# [Demo Video](https://github.com/livingstonantony/AI_Employee/tree/master/doc/demo.mov)
 ## Project Structure
 
 ```
