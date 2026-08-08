@@ -14,7 +14,7 @@ A teaching project demonstrating how to build an **AI-powered HR assistant** usi
 ├── app/
 │   ├── androidAPP/       # Android entry point
 |   ├── desktopApp/       # Desktop (JVM) entry point
-|   ├── iosAP/            # iOS entry point (Xcode)
+|   ├── iosApp/            # iOS entry point (Xcode)
 │   └── shared/           # Shared Compose Multiplatform UI & logic
 |       └── src/
 |           ├── commonMain/     ← THE MOST IMPORTANT FOLDER (see below)
