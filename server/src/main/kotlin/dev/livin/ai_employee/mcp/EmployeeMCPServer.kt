@@ -2,8 +2,11 @@ package dev.livin.ai_employee.mcp
 
 import dev.livin.ai_employee.model.EmployeeDetails
 import dev.livin.ai_employee.repository.EmployeeRepository
+import io.ktor.server.cio.CIO
+import io.ktor.server.engine.embeddedServer
 import io.modelcontextprotocol.kotlin.sdk.server.Server
 import io.modelcontextprotocol.kotlin.sdk.server.ServerOptions
+import io.modelcontextprotocol.kotlin.sdk.server.mcpStreamableHttp
 import io.modelcontextprotocol.kotlin.sdk.types.CallToolResult
 import io.modelcontextprotocol.kotlin.sdk.types.Implementation
 import io.modelcontextprotocol.kotlin.sdk.types.ServerCapabilities
@@ -26,17 +29,17 @@ fun buildEmployeeMCPServer(repo: EmployeeRepository): Server {
         )
     )
 
-/*    server.addTool(
-        name = "Get Employees",
+    server.addTool(
+        name = "get_employees",
         description = "Retrieve Employees from the company",
         inputSchema = ToolSchema()
     ) {
         val employees = repo.getEmployees()
         CallToolResult(content = listOf(TextContent(text = employees.toString())))
-    }*/
+    }
 
     server.addTool(
-        name = " Get Employee by id",
+        name = "get_employee_by_id",
         description = "Retrieve detailed information about a specific Employee by id from the company",
         inputSchema = ToolSchema(
             properties = buildJsonObject {
@@ -60,7 +63,7 @@ fun buildEmployeeMCPServer(repo: EmployeeRepository): Server {
     }
 
     server.addTool(
-        name = " Add Employee",
+        name = "add_employee",
         description = "Add a new employee into the company",
         inputSchema = ToolSchema(
             properties = buildJsonObject {
@@ -87,3 +90,15 @@ fun buildEmployeeMCPServer(repo: EmployeeRepository): Server {
     }
     return server
 }
+
+/*
+fun main(args: Array<String>) {
+
+    val port = args.firstOrNull()?.toIntOrNull() ?: 3001
+    val repo = EmployeeRepository()
+    embeddedServer(CIO, host = "127.0.0.1", port = port) {
+        mcpStreamableHttp {
+            buildEmployeeMCPServer(repo)
+        }
+    }.start(wait = true)
+}*/

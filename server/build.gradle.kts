@@ -16,6 +16,8 @@ dependencies {
     implementation(libs.logback)
     implementation(libs.ktor.serverCore)
     implementation(libs.ktor.serverNetty)
+    implementation(libs.ktor.serverCio)
+    implementation(libs.ktor.serverCors)
     implementation(libs.ktor.contentNegotiation)
     implementation(libs.ktor.serialization)
     implementation(libs.kotlin.mcp.sdk)
