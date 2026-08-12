@@ -24,7 +24,6 @@ fun main() {
         CIO,
         port = 8080, host = "127.0.0.1",
     ) {
-//        configureHttp()
         module(employeeRepository)
         mcp(employeeRepository)
     }
@@ -32,9 +31,6 @@ fun main() {
 }
 
 fun Application.module(employeeRepository: EmployeeRepository) {
-/*    install(ContentNegotiation) {
-        json()
-    }*/
 
     routing {
         get("/") {
@@ -46,20 +42,9 @@ fun Application.module(employeeRepository: EmployeeRepository) {
 
 
 }
+
 fun Application.mcp(repository: EmployeeRepository) {
     mcpStreamableHttp("/mcp") {
         buildEmployeeMCPServer(repository)
-    }
-}
-
-fun Application.configureHttp() {
-    install(CORS) {
-        allowMethod(HttpMethod.Options)
-        allowMethod(HttpMethod.Put)
-        allowMethod(HttpMethod.Delete)
-        allowMethod(HttpMethod.Patch)
-        allowHeader(HttpHeaders.Authorization)
-        allowHeader("MyCustomHeader")
-        anyHost() // @TODO: Don't do this in production if possible. Try to limit it.
     }
 }
