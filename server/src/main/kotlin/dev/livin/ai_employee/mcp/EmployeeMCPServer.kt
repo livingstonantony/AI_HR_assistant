@@ -8,9 +8,15 @@ import io.modelcontextprotocol.kotlin.sdk.server.Server
 import io.modelcontextprotocol.kotlin.sdk.server.ServerOptions
 import io.modelcontextprotocol.kotlin.sdk.server.mcpStreamableHttp
 import io.modelcontextprotocol.kotlin.sdk.types.CallToolResult
+import io.modelcontextprotocol.kotlin.sdk.types.GetPromptResult
 import io.modelcontextprotocol.kotlin.sdk.types.Implementation
+import io.modelcontextprotocol.kotlin.sdk.types.PromptArgument
+import io.modelcontextprotocol.kotlin.sdk.types.PromptMessage
+import io.modelcontextprotocol.kotlin.sdk.types.ReadResourceResult
+import io.modelcontextprotocol.kotlin.sdk.types.Role
 import io.modelcontextprotocol.kotlin.sdk.types.ServerCapabilities
 import io.modelcontextprotocol.kotlin.sdk.types.TextContent
+import io.modelcontextprotocol.kotlin.sdk.types.TextResourceContents
 import io.modelcontextprotocol.kotlin.sdk.types.ToolSchema
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.double
@@ -23,56 +29,66 @@ import kotlinx.serialization.json.putJsonObject
 fun buildEmployeeMCPServer(repo: EmployeeRepository): Server {
 
     val server = Server(
-        serverInfo = Implementation(name = "employee_mcp_server", version = "1.0.0"),
-        options = ServerOptions(
-            capabilities = ServerCapabilities(tools = ServerCapabilities.Tools(true))
+        serverInfo = Implementation(name = "employee_mcp_server", version = "1.0.0"), options = ServerOptions(
+            capabilities = ServerCapabilities(
+                tools = ServerCapabilities.Tools(true),
+                resources = ServerCapabilities.Resources(subscribe = false, listChanged = false),
+                prompts = ServerCapabilities.Prompts(listChanged = false),
+            )
         )
     )
 
-    server.addTool(
-        name = "get_employees",
-        description = "Retrieve Employees from the company",
-        inputSchema = ToolSchema()
+    // Retrieve all employees from the company
+    server.addResource(
+        uri = "employees://all",
+        name = "All Employees",
+        description = "Retrieve all Employees from the company",
+        mimeType = "text/plain"
     ) {
         val employees = repo.getEmployees()
-        CallToolResult(content = listOf(TextContent(text = employees.toString())))
-    }
-
-    server.addTool(
-        name = "get_employee_by_id",
-        description = "Retrieve detailed information about a specific Employee by id from the company",
-        inputSchema = ToolSchema(
-            properties = buildJsonObject {
-                putJsonObject("id") { put("type", "integer") }
-            },
-            required = listOf("id")
-        )
-    ) { request ->
-        val id = request.arguments?.get("id")?.jsonPrimitive?.int
-            ?: return@addTool CallToolResult(
-                content = listOf(TextContent(text = "Missing required argument: id"))
-            )
-        val employee = repo.getEmployeeById(id)
-        CallToolResult(
-            content = listOf(
-                TextContent(
-                    text = employee?.toString() ?: "Employee does not exist with id: $id"
+        ReadResourceResult(
+            contents = listOf(
+                TextResourceContents(
+                    uri = "employees://all", text = employees.toString()
                 )
             )
         )
     }
 
+    // Retrieve a specific employee by ID from the company
+    server.addResourceTemplate(
+        uriTemplate = "employees://{id}",
+        name = "Employee by ID",
+        description = "Retrieve detailed information about a specific Employee by id from the company",
+        mimeType = "text/plain"
+    ) { request, uriVariables ->
+        val id = uriVariables["id"]?.toIntOrNull() ?: return@addResourceTemplate ReadResourceResult(
+            contents = listOf(
+                TextResourceContents(
+                    uri = request.uri, text = "Invalid or missing employee ID"
+                )
+            )
+        )
+        val employee = repo.getEmployeeById(id)
+        ReadResourceResult(
+            contents = listOf(
+                TextResourceContents(
+                    uri = request.uri, text = employee?.toString() ?: "Employee does not exist with id: $id"
+                )
+            )
+        )
+    }
+
+
+
     server.addTool(
-        name = "add_employee",
-        description = "Add a new employee into the company",
-        inputSchema = ToolSchema(
+        name = "Add new Employee", description = "Add a new employee into the company", inputSchema = ToolSchema(
             properties = buildJsonObject {
                 putJsonObject("name") { put("type", "string") }
                 putJsonObject("designation") { put("type", "string") }
                 putJsonObject("department") { put("type", "string") }
                 putJsonObject("salary") { put("type", "number") }
-            },
-            required = listOf("name", "designation", "department", "salary")
+            }, required = listOf("name", "designation", "department", "salary")
         )
     ) { request ->
 
@@ -87,6 +103,52 @@ fun buildEmployeeMCPServer(repo: EmployeeRepository): Server {
 
         val data = repo.addEmployee(employee)
         CallToolResult(content = listOf(TextContent(text = "Employee added successfully: $data")))
+    }
+
+
+    server.addPrompt(
+        name = "Add Employee", description = "Add a new employee to the company", arguments = listOf(
+            PromptArgument(
+                name = "name",
+                description = "The name of the employee to add",
+                required = true,
+            ), PromptArgument(
+                name = "designation",
+                description = "The designation of the employee to add",
+                required = true,
+            ), PromptArgument(
+                name = "department",
+                description = "The department of the employee to add",
+                required = true,
+            ), PromptArgument(
+                name = "salary",
+                description = "The salary of the employee to add",
+                required = true,
+            )
+        )
+    ) { request ->
+        val name = request.arguments?.get("name") ?: ""
+        val designation = request.arguments?.get("designation") ?: ""
+        val department = request.arguments?.get("department") ?: ""
+        val salary = request.arguments?.get("salary") ?: 0.0
+
+
+
+
+        GetPromptResult(
+            messages = listOf(
+                PromptMessage(
+                    role = Role.User,
+                    content = TextContent(
+                        "Add employee with details: " +
+                                "\nname: $name, " +
+                                "\ndesignation: $designation, " +
+                                "\ndepartment: $department, " +
+                                "\nsalary: $salary"
+                    )
+                )
+            )
+        )
     }
     return server
 }

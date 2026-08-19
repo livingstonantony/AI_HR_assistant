@@ -6,11 +6,11 @@ import dev.livin.ai_employee.model.EmployeeDetails
 
 class EmployeeRepository {
     private val employees = mutableListOf(
-        Employee(1, "John Doe", "Android Developer", "Mobile", 85000.0),
-        Employee(2, "Alice Smith", "Backend Developer", "Platform", 90000.0),
-        Employee(3, "David Brown", "QA Engineer", "Testing", 65000.0),
-        Employee(4, "Sophia Wilson", "Project Manager", "Management", 12000.0),
-        Employee(5, "Michael Chen", "UI/UX Designer", "Design", 70000.0),
+        Employee(1, "K John Doe", "Android Developer", "Mobile", 85000.0),
+        Employee(2, "K Alice Smith", "Backend Developer", "Platform", 90000.0),
+        Employee(3, "K David Brown", "QA Engineer", "Testing", 65000.0),
+        Employee(4, "K Sophia Wilson", "Project Manager", "Management", 12000.0),
+        Employee(5, "K Michael Chen", "UI/UX Designer", "Design", 70000.0),
 
     )
 
