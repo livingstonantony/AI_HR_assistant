@@ -21,9 +21,9 @@ private suspend fun <T> retryUntilReady(label: String, timeout: Duration = 10.se
             try {
                 return@withTimeoutOrNull block()
             } catch (e: Exception) {
-                println("$label not ready (${e.message}),  Retrying in ${delayMs} ms...")
+                println("$label not ready (${e.message}),  Retrying in $delayMs ms...")
                 delay(delayMs)
-                if (delayMs < 8_000L) delayMs * 2
+//                if (delayMs < 8_000L) delayMs * 2
             }
         }
         @Suppress("UNREACHABLE_CODE")
@@ -39,24 +39,26 @@ class EmployeeAgentProvider {
         // Use 10.0.2.2 for Android Emulator to reach the host computer, localhost for Desktop
 
         val host = if (platform.name.contains("Android", ignoreCase = true)) {
-            "192.168.0.3" // Change this to your actual machine IP if 192.168.0.3 is wrong
+            "127.0.0.1" // Change this to your actual machine IP if 192.168.0.3 is wrong
         } else {
-            "localhost"
+            "127.0.0.1"
         }
         val mcpUrl = "http://$host:8080/mcp"
         println("MCP:URL: $mcpUrl")
 
         val mcpRegistry = retryUntilReady("MCP tools") {
-            McpToolRegistryProvider.fromSseUrl(mcpUrl)
+            McpToolRegistryProvider.streamableHttp {
+               url= mcpUrl
+            }
         } ?: run {
             println("MCP Server not available after timeout - starting without MCP tools")
             ToolRegistry {}
         }
 
-        val combinedRegistry = mcpRegistry + ToolRegistry {
+        val combinedRegistry = mcpRegistry /*+ ToolRegistry {
             val api = EmployeeApi()
             tool(GetEmployeesTool(api))
-        }
+        }*/
 
         // -- RESOURCES: auto-discover all resources and inject into system prompt --
         // No hardcoded URIs - the server decides what resources to expose.

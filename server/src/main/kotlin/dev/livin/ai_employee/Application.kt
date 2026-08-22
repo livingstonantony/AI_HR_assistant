@@ -24,6 +24,7 @@ fun main() {
         CIO,
         port = 8080, host = "127.0.0.1",
     ) {
+        http()
         module(employeeRepository)
         mcp(employeeRepository)
     }
@@ -41,6 +42,19 @@ fun Application.module(employeeRepository: EmployeeRepository) {
     }
 
 
+}
+
+fun Application.http(){
+
+    install(CORS) {
+        allowMethod(HttpMethod.Options)
+        allowMethod(HttpMethod.Put)
+        allowMethod(HttpMethod.Delete)
+        allowMethod(HttpMethod.Patch)
+        allowHeader(HttpHeaders.Authorization)
+        allowHeader("MyCustomHeader")
+        anyHost()
+    }
 }
 
 fun Application.mcp(repository: EmployeeRepository) {

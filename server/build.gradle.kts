@@ -21,6 +21,7 @@ dependencies {
     implementation(libs.ktor.contentNegotiation)
     implementation(libs.ktor.serialization)
     implementation(libs.kotlin.mcp.sdk)
+    implementation("io.ktor:ktor-server-cors:3.5.1")
     testImplementation(libs.ktor.serverTestHost)
     testImplementation(libs.kotlin.testJunit)
 
