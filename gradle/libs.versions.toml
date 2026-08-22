@@ -68,6 +68,7 @@ ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 androidx-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlin-mcp-sdk = { module = "io.modelcontextprotocol:kotlin-sdk-server", version.ref = "mcpVersion" }
+kotlin-mcp-sdk-client = { module = "io.modelcontextprotocol:kotlin-sdk-client", version.ref = "mcpVersion" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

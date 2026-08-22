@@ -47,12 +47,15 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.compose.uiTooling)
             implementation(libs.ktor.client.okhttp)
+            // MCP client SDK - JVM/Android only (not available for iOS)
+            implementation(libs.kotlin.mcp.sdk.client)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.cio)
+            implementation(libs.kotlin.mcp.sdk.client)
         }
 
         commonMain.dependencies {
