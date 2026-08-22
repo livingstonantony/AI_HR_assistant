@@ -1,48 +1,27 @@
 package dev.livin.ai_employee.ui
 
-import kotlinx.coroutines.launch
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import ai.koog.agents.core.agent.AIAgent
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.livin.ai_employee.agent.EmployeeAgentProvider
-import ai.koog.agents.core.agent.AIAgent
-import androidx.lifecycle.compose.LifecycleResumeEffect
-import dev.livin.ai_employee.EmployeeApi
+import dev.livin.ai_employee.agent.MCPService
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(onBackClick: () -> Unit) {
+fun ChatScreen(mcpService: MCPService, onBackClick: () -> Unit) {
     val scope = rememberCoroutineScope()
     val scopeMCP = rememberCoroutineScope()
 
@@ -107,6 +86,17 @@ fun ChatScreen(onBackClick: () -> Unit) {
                 }
             }
 
+            // -- MCP Prompt quick-select chips ---------
+            // Each chips fetches the prompt from the MCP server, then sends the resulting message to the agent - demonstrating MCP Prompts.
+            PromptChipsRow(
+                mcpService = mcpService,
+                agent = agent,
+                isLoading = isLoading,
+                onMessage = { msg -> messages = messages + msg },
+                onLoading = { isLoading = it }
+
+            )
+
             Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                 OutlinedTextField(
                     value = inputText,
@@ -151,6 +141,70 @@ fun ChatBubble(message: ChatMessage) {
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = alignment) {
         Surface(shape = RoundedCornerShape(12.dp), color = color) {
             Text(text = message.text, modifier = Modifier.padding(12.dp))
+        }
+    }
+}
+
+// Prompt chips - each one fetches an MCP prompt then send it to the agent
+private data class PromptShortCut(val label: String, val promptName: String, val args: Map<String, String>)
+
+private val PROMPT_SHORTCUTS = listOf(
+    PromptShortCut("HR Summary", "hr_summary", emptyMap()),
+    PromptShortCut(
+        "Add Employee",
+        "add_employee",
+        mapOf("name" to "John Doe", "designation" to "Engineering", "salary" to "80000")
+    ),
+    PromptShortCut(
+        "Onboarding",
+        "onboarding_checklist",
+        mapOf("employee_name" to "JJane Smith", "department" to "Product")
+    ),
+
+    )
+
+@Composable
+private fun PromptChipsRow(
+    mcpService: MCPService,
+    agent: AIAgent<String, String>?,
+    isLoading: Boolean,
+    onMessage: (ChatMessage) -> Unit,
+    onLoading: (Boolean) -> Unit
+) {
+
+    val scope = rememberCoroutineScope()
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState())
+            .padding(horizontal = 12.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        PROMPT_SHORTCUTS.forEach { shortCut ->
+            AssistChip(
+                onClick = {
+                    val currentAgent = agent ?: return@AssistChip
+                    scope.launch {
+                        onLoading(true)
+
+                        try {
+                            // 1. Fetch the MCP prompt -> get the pre-built message
+                            val promptMessage = mcpService.fetchPrompt(shortCut.promptName, shortCut.args)
+                            onMessage(ChatMessage("Using Prompt: ${shortCut.promptName}", false))
+
+                            // 2. Send that message to the LLM agent
+                            val response = currentAgent.run(promptMessage)
+                            onMessage(ChatMessage(response, false))
+                        } catch (e: Exception) {
+                            onMessage(ChatMessage("Prompt error: ${e.message}", false))
+                        } finally {
+                            onLoading(false)
+                        }
+                    }
+                },
+                label = { Text(shortCut.label, style = MaterialTheme.typography.labelSmall) },
+                enabled = !isLoading && agent != null,
+            )
         }
     }
 }

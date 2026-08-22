@@ -19,9 +19,11 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Science
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -42,12 +44,25 @@ import dev.livin.ai_employee.model.EmployeeItem
 fun EmployeesScreen(
     employees: List<EmployeeItem>,
     onChatClick: () -> Unit,
+    onMcpExplorerClick: () -> Unit,
     onEmployeeClick: (EmployeeItem) -> Unit
 ) {
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = onChatClick) {
-                Icon(Icons.Default.Chat, contentDescription = "Chat with AI")
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.End
+            ) {
+                ExtendedFloatingActionButton(
+                    onClick = onMcpExplorerClick,
+                    icon = { Icon(Icons.Filled.Science, contentDescription = null) },
+                    text = { Text("MCP Explorer") },
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                )
+                FloatingActionButton(onClick = onChatClick) {
+                    Icon(Icons.Default.Chat, contentDescription = "Chat with AI")
+                }
             }
         }
     ) {
@@ -138,10 +153,10 @@ fun EmployeesScreenPreview() {
                 EmployeeItem(2, "Jane Smith"),
                 EmployeeItem(3, "Alice Johnson")
             ),
-            onChatClick = {}
-        ) {
-
-        }
+            onChatClick = {},
+            onMcpExplorerClick = {},
+            onEmployeeClick = {},
+        )
     }
 }
 

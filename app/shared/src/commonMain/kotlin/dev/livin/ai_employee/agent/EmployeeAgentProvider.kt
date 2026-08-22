@@ -46,27 +46,50 @@ class EmployeeAgentProvider {
         val mcpUrl = "http://$host:8080/mcp"
         println("MCP:URL: $mcpUrl")
 
-        val mcpRegistry = retryUntilReady("MCP tools"){
+        val mcpRegistry = retryUntilReady("MCP tools") {
             McpToolRegistryProvider.fromSseUrl(mcpUrl)
-        }?: run {
+        } ?: run {
             println("MCP Server not available after timeout - starting without MCP tools")
             ToolRegistry {}
         }
 
-        val combinedRegistry = mcpRegistry + ToolRegistry{
+        val combinedRegistry = mcpRegistry + ToolRegistry {
             val api = EmployeeApi()
             tool(GetEmployeesTool(api))
         }
 
+        // -- RESOURCES: auto-discover all resources and inject into system prompt --
+        // No hardcoded URIs - the server decides what resources to expose.
+        val mcpService = MCPService(mcpUrl)
+        val resourceContext = retryUntilReady("MCP Resources") {
+            val resources = mcpService.listResources()
+            resources.map { resource ->
+                val content = mcpService.readResource(resource.uri)
+                "=== ${resource.name} (${resource.uri}) ===\n$content"
+            }.joinToString("\n\n")
+        } ?: "Context data unavailable - MCP server did not respond in time"
 
-        // 3.
+        // -- PROMPTS: listed at startup - used by ChatScreen chips --------
+        // The agent itself does not consume prompts directly; they are fetched on demand by the UI (prompt chips in ChatScreen) and sent as message.
+        val availablePrompts = retryUntilReady("MCP Prompts") {
+            mcpService.listPrompts().joinToString(", ") { it.name }
+        } ?: "none"
+
+        mcpService.close()
+
         val agent = AIAgent(
             toolRegistry = combinedRegistry,
             promptExecutor = platform.promptExecutor,
             llmModel = getPlatform().llmModel,
             systemPrompt = """
                 You are a helpful HR assistant. 
-                Use the provided tools to fetch employee data when asked.
+                
+                Context loaded from MCP resources at session start:
+                $resourceContext
+                
+                Available prompt templates: $availablePrompts
+                
+                Use tools for write operations or to refresh data after changes.
             """.trimIndent()
         ) {
             install(EventHandler) {
