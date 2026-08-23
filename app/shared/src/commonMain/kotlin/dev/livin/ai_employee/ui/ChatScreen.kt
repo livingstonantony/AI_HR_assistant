@@ -93,8 +93,8 @@ fun ChatScreen(mcpService: MCPService, onBackClick: () -> Unit) {
                 agent = agent,
                 isLoading = isLoading,
                 onMessage = { msg -> messages = messages + msg },
-                onLoading = { isLoading = it }
-
+                onLoading = { isLoading = it },
+                inputText = { inputText = it }
             )
 
             Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
@@ -169,7 +169,8 @@ private fun PromptChipsRow(
     agent: AIAgent<String, String>?,
     isLoading: Boolean,
     onMessage: (ChatMessage) -> Unit,
-    onLoading: (Boolean) -> Unit
+    onLoading: (Boolean) -> Unit,
+    inputText: (String) -> Unit,
 ) {
 
     val scope = rememberCoroutineScope()
@@ -192,9 +193,12 @@ private fun PromptChipsRow(
                             val promptMessage = mcpService.fetchPrompt(shortCut.promptName, shortCut.args)
                             onMessage(ChatMessage("Using Prompt: ${shortCut.promptName}", false))
 
+                            println("PROMPT_MESSAGE: \n\n$promptMessage")
+                            inputText(promptMessage)
+
                             // 2. Send that message to the LLM agent
-                            val response = currentAgent.run(promptMessage)
-                            onMessage(ChatMessage(response, false))
+//                            val response = currentAgent.run(promptMessage)
+//                            onMessage(ChatMessage(response, false))
                         } catch (e: Exception) {
                             onMessage(ChatMessage("Prompt error: ${e.message}", false))
                         } finally {

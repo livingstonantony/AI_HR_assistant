@@ -79,19 +79,15 @@ class EmployeeAgentProvider {
 
         mcpService.close()
 
+        //   $resourceContext - Add it later in the initial prompt
         val agent = AIAgent(
             toolRegistry = combinedRegistry,
             promptExecutor = platform.promptExecutor,
             llmModel = getPlatform().llmModel,
             systemPrompt = """
-                You are a helpful HR assistant. 
+                You are a helpful HR assistant.  who maintains employee's data in the company
                 
-                Context loaded from MCP resources at session start:
-                $resourceContext
-                
-                Available prompt templates: $availablePrompts
-                
-                Use tools for write operations or to refresh data after changes.
+                Make sure you use tools instead of resources after add/update/delete an employee.
             """.trimIndent()
         ) {
             install(EventHandler) {
