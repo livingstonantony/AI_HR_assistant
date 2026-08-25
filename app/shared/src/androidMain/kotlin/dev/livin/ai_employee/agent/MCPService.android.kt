@@ -2,7 +2,7 @@ package dev.livin.ai_employee.agent
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.http.content.TextContent
+
 import io.modelcontextprotocol.kotlin.sdk.client.Client
 import io.modelcontextprotocol.kotlin.sdk.client.StreamableHttpClientTransport
 import io.modelcontextprotocol.kotlin.sdk.types.GetPromptRequest
@@ -10,6 +10,7 @@ import io.modelcontextprotocol.kotlin.sdk.types.GetPromptRequestParams
 import io.modelcontextprotocol.kotlin.sdk.types.Implementation
 import io.modelcontextprotocol.kotlin.sdk.types.ReadResourceRequest
 import io.modelcontextprotocol.kotlin.sdk.types.ReadResourceRequestParams
+import io.modelcontextprotocol.kotlin.sdk.types.TextContent
 import io.modelcontextprotocol.kotlin.sdk.types.TextResourceContents
 
 actual class MCPService actual constructor(private val mcpUrl: String) {
@@ -45,7 +46,7 @@ actual class MCPService actual constructor(private val mcpUrl: String) {
        ensureConnected()
         return client.getPrompt(GetPromptRequest(params = GetPromptRequestParams(name = name, arguments = args)))
             .messages.joinToString("\n\n") { msg->
-                "[${msg.role.name.uppercase()}]\n" + ((msg.content as? TextContent)?.text ?: "")
+                ((msg.content as? TextContent)?.text ?: "")
             }
     }
 

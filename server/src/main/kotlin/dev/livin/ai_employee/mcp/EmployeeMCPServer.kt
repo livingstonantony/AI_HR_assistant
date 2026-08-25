@@ -402,6 +402,52 @@ fun buildEmployeeMCPServer(repo: EmployeeRepository): Server {
 
     }
 
+    // Prompt 3: get_employee_details_by_id - Get a employee details by ID, with argument validation and error handling
+    server.addPrompt(
+        name = "get_employee_details_by_id",
+        description = "Generate a prompt to get an employee details by their ID",
+        arguments = listOf(
+            PromptArgument(name = "id", description = "Employee ID", required = true)
+        )
+    ) { request ->
+        val a = request.arguments ?: emptyMap()
+
+        GetPromptResult(
+            description = "Ask the LLM to get an employee details by their ID",
+            messages = listOf(
+                PromptMessage(
+                    role = Role.User,
+                    content = TextContent(
+                        "Get the details of the employee with ID: ${a["id"]}"
+                    )
+                )
+            )
+        )
+
+    }
+
+    // Prompt 4: Get me all the employees from the company
+    server.addPrompt(
+        name = "get_employees",
+        description = "Generate a prompt to get all employees from the company",
+        arguments = listOf()
+    ) { request ->
+        val a = request.arguments ?: emptyMap()
+
+        GetPromptResult(
+            description = "Ask the LLM to get all employees from the company",
+            messages = listOf(
+                PromptMessage(
+                    role = Role.User,
+                    content = TextContent(
+                        "Get all employees from the company"
+                    )
+                )
+            )
+        )
+
+    }
+
 
 
 

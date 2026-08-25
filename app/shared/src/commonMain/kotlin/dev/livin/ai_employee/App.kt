@@ -46,7 +46,7 @@ fun App() {
 
         val platform = remember { getPlatform() }
         val mcpHost = remember {
-            if (platform.name.contains("Android", ignoreCase = true)) "192.168.0.3" else "localhost"
+            if (platform.name.contains("Android", ignoreCase = true)) "10.0.2.2" else "localhost"
         }
         val mcpService = remember { MCPService("http://$mcpHost:8080/mcp") }
         NavHost(

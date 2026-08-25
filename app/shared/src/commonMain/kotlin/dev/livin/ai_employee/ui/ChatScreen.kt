@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.ArrowBack
@@ -138,11 +139,15 @@ fun ChatBubble(message: ChatMessage) {
     val alignment = if (message.isUser) Alignment.End else Alignment.Start
     val color =
         if (message.isUser) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.secondaryContainer
-    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = alignment) {
-        Surface(shape = RoundedCornerShape(12.dp), color = color) {
-            Text(text = message.text, modifier = Modifier.padding(12.dp))
+
+    SelectionContainer {
+        Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = alignment) {
+            Surface(shape = RoundedCornerShape(12.dp), color = color) {
+                Text(text = message.text, modifier = Modifier.padding(12.dp))
+            }
         }
     }
+
 }
 
 // Prompt chips - each one fetches an MCP prompt then send it to the agent
@@ -160,6 +165,19 @@ private val PROMPT_SHORTCUTS = listOf(
         "delete_employee_by_id",
         mapOf("id" to "1")
     )
+    ,
+    PromptShortCut(
+        "Get Employee Details",
+        "get_employee_details_by_id",
+        mapOf("id" to "1")
+    )
+    ,
+    PromptShortCut(
+        "Get Employees",
+        "get_employees",
+        emptyMap()
+    )
+    ,
     /*PromptShortCut(
         "Onboarding",
         "onboarding_checklist",

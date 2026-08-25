@@ -86,8 +86,6 @@ class EmployeeAgentProvider {
             llmModel = getPlatform().llmModel,
             systemPrompt = """
                 You are a helpful HR assistant.  who maintains employee's data in the company
-                
-                Make sure you use tools instead of resources after add/update/delete an employee.
             """.trimIndent()
         ) {
             install(EventHandler) {
