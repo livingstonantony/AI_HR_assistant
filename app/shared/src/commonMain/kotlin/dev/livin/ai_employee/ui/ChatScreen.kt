@@ -149,17 +149,22 @@ fun ChatBubble(message: ChatMessage) {
 private data class PromptShortCut(val label: String, val promptName: String, val args: Map<String, String>)
 
 private val PROMPT_SHORTCUTS = listOf(
-    PromptShortCut("HR Summary", "hr_summary", emptyMap()),
+//    PromptShortCut("HR Summary", "hr_summary", emptyMap()),
     PromptShortCut(
         "Add Employee",
         "add_employee",
         mapOf("name" to "John Doe", "designation" to "Engineering", "salary" to "80000")
     ),
     PromptShortCut(
+        "Delete Employee By ID",
+        "delete_employee_by_id",
+        mapOf("id" to "1")
+    )
+    /*PromptShortCut(
         "Onboarding",
         "onboarding_checklist",
         mapOf("employee_name" to "JJane Smith", "department" to "Product")
-    ),
+    ),*/
 
     )
 
@@ -191,7 +196,7 @@ private fun PromptChipsRow(
                         try {
                             // 1. Fetch the MCP prompt -> get the pre-built message
                             val promptMessage = mcpService.fetchPrompt(shortCut.promptName, shortCut.args)
-                            onMessage(ChatMessage("Using Prompt: ${shortCut.promptName}", false))
+//                            onMessage(ChatMessage("Using Prompt: ${shortCut.promptName}", false))
 
                             println("PROMPT_MESSAGE: \n\n$promptMessage")
                             inputText(promptMessage)

@@ -168,6 +168,7 @@ fun buildEmployeeMCPServer(repo: EmployeeRepository): Server {
 
     }
 
+
     // ===================================================================
     // TOOLS
     // A Tool is an action the LLM can invoke. Each tool declares an.
@@ -377,66 +378,31 @@ fun buildEmployeeMCPServer(repo: EmployeeRepository): Server {
 
     }
 
-    // Prompt 2: hr_summary - no arguments, uses live data from the repository
+    // Prompt 2: delete_employee_by_id - Delete a employee by ID, with argument validation and error handling
     server.addPrompt(
-        name = "hr_summary",
-        description = "Generate an executive HR summary across all departments",
-        arguments = emptyList(),
-    ) { _ ->
-
-        val employees = repo.getEmployees()
-        val lines = employees.groupBy { it.department }.entries.joinToString("\n") { (dept, emps) ->
-            " $dept: ${emps.size} employee(s), avg salary ${"$%.0f".format(emps.map { it.salary }.average())}"
-        }
-
-        GetPromptResult(
-            messages = listOf(
-                PromptMessage(
-                    role = Role.User,
-                    content = TextContent(
-                        "Total headcount: ${employees.size}\n\nBy department:\n\n$lines\n\n" +
-                                "Please provide an executive HR summary with insights and recommendations",
-                    )
-                )
-            )
-        )
-
-    }
-
-    // Prompt 3: onboarding_checklist - department argument also has completion
-    server.addPrompt(
-        name = "onboarding_checklist",
-        description = "Create a personalized onboarding checklist for a new hire",
+        name = "delete_employee_by_id",
+        description = "Generate a prompt to delete an employee by their ID",
         arguments = listOf(
-            PromptArgument(
-                name = "employee_name",
-                description = "Name of the new employee",
-                required = true
-            ),
-            PromptArgument(
-                name = "department_name",
-                description = "Department being joined - type for suggestions",
-                required = true
-            )
-        ),
+            PromptArgument(name = "id", description = "Employee ID", required = true)
+        )
     ) { request ->
+        val a = request.arguments ?: emptyMap()
 
-        val a = request.params.arguments ?: emptyMap()
         GetPromptResult(
+            description = "Ask the LLM to delete an employee by their ID",
             messages = listOf(
                 PromptMessage(
                     role = Role.User,
                     content = TextContent(
-                        "Create a comprehensive onboarding checklist for ${a["employee_name"] ?: "the new employee"} " +
-                                "who is joining the ${a["department_name"] ?: "company"} department" +
-                                "Include: first-day tasks, equipment & access setup, team introductions, " +
-                                "and 30/60/90-day milestones"
+                        "Delete the employee with ID: ${a["id"]}"
                     )
                 )
             )
         )
 
     }
+
+
 
 
     // -- COMPLETION + PAGINATION --------------------------------------

@@ -1,5 +1,6 @@
 package dev.livin.ai_employee.routes
 
+import dev.livin.ai_employee.model.Employee
 import dev.livin.ai_employee.model.EmployeeDetails
 import dev.livin.ai_employee.model.EmployeeItem
 import dev.livin.ai_employee.repository.EmployeeRepository
@@ -46,6 +47,29 @@ fun Route.employeeRoutes(repository: EmployeeRepository) {
                 call.respond(
                     HttpStatusCode.NotFound,
                     mapOf("message" to "Employee not found")
+                )
+            } else {
+                call.respond(employee)
+            }
+        }
+        delete ("employee/{id}") {
+
+            val id = call.parameters["id"]?.toIntOrNull()
+
+            if (id == null) {
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    mapOf("message" to "Invalid employee id")
+                )
+                return@delete
+            }
+
+            val employee: Employee? = repository.deleteEmployeeById(id)
+
+            if (employee == null) {
+                call.respond(
+                    HttpStatusCode.OK,
+                    mapOf("message" to "Employee deleted successfully")
                 )
             } else {
                 call.respond(employee)

@@ -49,7 +49,7 @@ actual class MCPService actual constructor(private val mcpUrl: String) {
        ensureConnected()
         return client.getPrompt(GetPromptRequest(params = GetPromptRequestParams(name = name, arguments = args)))
             .messages.joinToString("\n\n") { msg->
-                "[${msg.role.name.uppercase()}]\n" + ((msg.content as? TextContent)?.text ?: "")
+                /*"[${msg.role.name.uppercase()}]\n" + */((msg.content as? TextContent)?.text ?: "")
             }
     }
 

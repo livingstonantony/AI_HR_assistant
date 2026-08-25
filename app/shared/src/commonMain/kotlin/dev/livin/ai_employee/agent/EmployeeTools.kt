@@ -10,7 +10,20 @@ import dev.livin.ai_employee.model.ResponseMessage
 import kotlinx.serialization.Serializable
 
 
-class GetEmployeesTool(private val api: EmployeeApi) : Tool<Unit, List<EmployeeItem>>(
+
+@Serializable
+data class DeleteEmployeeArgs(val id: Int)
+
+class DeleteEmployeeByIDTool(private val api: EmployeeApi) : Tool<DeleteEmployeeArgs, ResponseMessage>(
+    argsType = typeToken<DeleteEmployeeArgs>(),
+    resultType = typeToken<ResponseMessage>(),
+    name = "Delete Employee",
+    description = "Deletes an employee by their ID."
+) {
+    override suspend fun execute(args: DeleteEmployeeArgs): ResponseMessage = api.deleteEmployeeById(args.id)
+}
+
+/*class GetEmployeesTool(private val api: EmployeeApi) : Tool<Unit, List<EmployeeItem>>(
     argsType = typeToken<Unit>(),
     resultType = typeToken<List<EmployeeItem>>(),
     name = "Get All Employees",
@@ -19,12 +32,13 @@ class GetEmployeesTool(private val api: EmployeeApi) : Tool<Unit, List<EmployeeI
     override suspend fun execute(args: Unit): List<EmployeeItem> {
         return api.getEmployees()
     }
-}
+}*/
 
+/*
 // 1. Define a wrapper for the arguments
 @Serializable
 data class GetEmployeeArgs(val id: Int)
-/*
+
 
 class GetEmployeeByIdTool(private val api: EmployeeApi) : Tool<GetEmployeeArgs, EmployeeDetails>(
     argsType = typeToken<GetEmployeeArgs>(),

@@ -55,10 +55,10 @@ class EmployeeAgentProvider {
             ToolRegistry {}
         }
 
-        val combinedRegistry = mcpRegistry /*+ ToolRegistry {
+        val combinedRegistry = mcpRegistry + ToolRegistry {
             val api = EmployeeApi()
-            tool(GetEmployeesTool(api))
-        }*/
+            tool(DeleteEmployeeByIDTool(api))
+        }
 
         // -- RESOURCES: auto-discover all resources and inject into system prompt --
         // No hardcoded URIs - the server decides what resources to expose.

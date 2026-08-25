@@ -18,6 +18,7 @@ class EmployeeRepository {
     fun getEmployees(): List<Employee> = employees
 
     fun getEmployeeById(id: Int): Employee? = employees.find { it.id == id }
+    fun deleteEmployeeById(id: Int): Employee? = employees.removeIf { it.id == id }.let { if (it) employees.find { it.id == id } else null }
 
     fun addEmployee(employee: EmployeeDetails): Employee {
         val id = employees.size + 1

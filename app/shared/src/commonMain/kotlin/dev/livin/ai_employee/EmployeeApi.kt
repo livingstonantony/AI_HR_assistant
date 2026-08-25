@@ -28,10 +28,16 @@ class EmployeeApi {
         return client.get("$BASE_URL/employees").body()
     }
 
+
     suspend fun getEmployeeById(id: Int): EmployeeDetails {
 
-        delay(500L)
         return client.get("$BASE_URL/employee/$id").body()
+    }
+
+    suspend fun deleteEmployeeById(id: Int): ResponseMessage {
+
+        delay(500L)
+        return client.delete("$BASE_URL/employee/$id").body()
     }
 
 
