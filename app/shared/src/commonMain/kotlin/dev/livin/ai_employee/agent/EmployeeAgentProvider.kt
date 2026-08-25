@@ -39,9 +39,9 @@ class EmployeeAgentProvider {
         // Use 10.0.2.2 for Android Emulator to reach the host computer, localhost for Desktop
 
         val host = if (platform.name.contains("Android", ignoreCase = true)) {
-            "127.0.0.1" // Change this to your actual machine IP if 192.168.0.3 is wrong
+            "10.0.2.2"
         } else {
-            "127.0.0.1"
+            "localhost"
         }
         val mcpUrl = "http://$host:8080/mcp"
         println("MCP:URL: $mcpUrl")

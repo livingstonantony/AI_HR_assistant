@@ -22,9 +22,10 @@ fun main() {
     val employeeRepository = EmployeeRepository()
     embeddedServer(
         CIO,
-        port = 8080, host = "127.0.0.1",
+        port = 8080, host = "0.0.0.0",
+
     ) {
-        http()
+//        http()
         module(employeeRepository)
         mcp(employeeRepository)
     }
@@ -58,7 +59,10 @@ fun Application.http(){
 }
 
 fun Application.mcp(repository: EmployeeRepository) {
-    mcpStreamableHttp("/mcp") {
+    mcpStreamableHttp(
+        path = "/mcp",
+        allowedHosts = listOf("localhost", "127.0.0.1", "10.0.2.2", "0.0.0.0")
+    ) {
         buildEmployeeMCPServer(repository)
     }
 }

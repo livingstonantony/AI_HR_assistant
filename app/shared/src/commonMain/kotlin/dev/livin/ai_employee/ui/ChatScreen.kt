@@ -153,7 +153,7 @@ private val PROMPT_SHORTCUTS = listOf(
     PromptShortCut(
         "Add Employee",
         "add_employee",
-        mapOf("name" to "John Doe", "designation" to "Engineering", "salary" to "80000")
+        mapOf("name" to "John Doe", "designation" to "Engineering","department" to "IT", "salary" to "80000")
     ),
     PromptShortCut(
         "Delete Employee By ID",
