@@ -73,14 +73,38 @@ fun App() {
                     employees = employees,
                     onEmployeeClick = { emp -> navController.navigate(EmployeeDetailRoute(emp.id)) },
                     onChatClick = { navController.navigate(ChatRoute) },// Handle FAB click,
-                    onMcpExplorerClick = { navController.navigate(MCPExploreRoute) }
+                    onMcpExplorerClick = { navController.navigate(MCPExploreRoute) },
+                    onConfirm = {
+                        scope.launch {
+                            try {
+                                EmployeeApi().addEmployee(it)
+                                // Refresh the employee list after a successful addition
+                                employees = EmployeeApi().getEmployees()
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    },
+                    onDelete = { id ->
+                        scope.launch {
+                            try {
+                                EmployeeApi().deleteEmployeeById(id)
+                                // Refresh the employee list after a successful deletion
+                                employees = EmployeeApi().getEmployees()
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
                 )
             }
             composable<ChatRoute> {
                 ChatScreen(mcpService = mcpService, onBackClick = { navController.popBackStack() })
             }
             composable<MCPExploreRoute> {
-                MCPExploreScreen(mcpService = mcpService, onBackClick = { navController.popBackStack() })
+                MCPExploreScreen(
+                    mcpService = mcpService,
+                    onBackClick = { navController.popBackStack() })
             }
 
             composable<EmployeeDetailRoute> { backStackEntry ->
