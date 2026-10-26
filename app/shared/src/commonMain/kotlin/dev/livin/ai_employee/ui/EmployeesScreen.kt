@@ -42,12 +42,12 @@ fun EmployeesScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalAlignment = Alignment.End
             ) {
-                ExtendedFloatingActionButton(
+/*                ExtendedFloatingActionButton(
                     onClick = onMcpExplorerClick,
                     icon = { Icon(Icons.Filled.Science, contentDescription = null) },
                     text = { Text("MCP Explorer") },
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                )
+                )*/
                 FloatingActionButton(onClick = {
                     isAddUserDialogVisible = true
                 }) {
