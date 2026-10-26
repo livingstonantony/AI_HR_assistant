@@ -19,8 +19,11 @@ import io.modelcontextprotocol.kotlin.sdk.server.mcpStreamableHttp
 
 fun main() {
 
+    System.setProperty("io.ktor.development", "true")
+
     val employeeRepository = EmployeeRepository()
     embeddedServer(
+
         CIO,
         port = 8080, host = "0.0.0.0",
 
