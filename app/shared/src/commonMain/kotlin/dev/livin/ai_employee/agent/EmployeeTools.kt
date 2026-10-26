@@ -17,7 +17,7 @@ data class DeleteEmployeeArgs(val id: Int)
 class DeleteEmployeeByIDTool(private val api: EmployeeApi) : Tool<DeleteEmployeeArgs, ResponseMessage>(
     argsType = typeToken<DeleteEmployeeArgs>(),
     resultType = typeToken<ResponseMessage>(),
-    name = "Delete Employee",
+    name = "delete_employee_by_id",
     description = "Deletes an employee by their ID."
 ) {
     override suspend fun execute(args: DeleteEmployeeArgs): ResponseMessage = api.deleteEmployeeById(args.id)
